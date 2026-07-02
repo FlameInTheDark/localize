@@ -1,0 +1,46 @@
+name: Localize CI
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+      - master
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+
+      - name: Install frontend dependencies
+        run: bun install --cwd web
+
+      - name: Build embedded frontend
+        run: cd web && VITE_API_BASE_URL= bun run build
+
+      - name: Move frontend to embed directory
+        run: |
+          mkdir -p internal/api/dist
+          cp -r web/dist/* internal/api/dist/
+
+      - name: Run tests
+        run: go test ./...
+
+      - name: Run lint
+        uses: golangci/golangci-lint-action@v6
+        with:
+          version: latest

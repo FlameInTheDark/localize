@@ -1,0 +1,73 @@
+name: Localize Semantic Release
+
+on:
+  push:
+    branches:
+      - main
+      - master
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  issues: write
+  pull-requests: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+
+      - name: Install frontend dependencies
+        run: bun install --cwd web
+
+      - name: Build embedded frontend
+        run: cd web && VITE_API_BASE_URL= bun run build
+
+      - name: Move frontend to embed directory
+        run: |
+          mkdir -p internal/api/dist
+          cp -r web/dist/* internal/api/dist/
+
+      - name: Run tests
+        run: go test ./...
+
+      - name: Run lint
+        uses: golangci/golangci-lint-action@v6
+        with:
+          version: latest
+
+      - name: Run semantic-release
+        id: semantic
+        uses: cycjimmy/semantic-release-action@v4
+        with:
+          extra_plugins: |
+            @semantic-release/changelog
+            @semantic-release/git
+            @semantic-release/github
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Dispatch release build
+        if: steps.semantic.outputs.new_release_published == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: >
+          gh api
+          repos/${{ github.repository }}/dispatches
+          -f event_type=semantic-release-published
+          -F client_payload[tag_name]=${{ steps.semantic.outputs.new_release_git_tag }}
+          -F client_payload[release_version]=${{ steps.semantic.outputs.new_release_version }}
+          -F client_payload[prerelease]=false

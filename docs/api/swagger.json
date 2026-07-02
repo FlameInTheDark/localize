@@ -1,0 +1,353 @@
+{
+    "schemes": [
+        "http",
+        "https"
+    ],
+    "swagger": "2.0",
+    "info": {
+        "description": "This is an API for the Localize application.",
+        "title": "Localize API",
+        "contact": {
+            "name": "Viktor Menshchikov",
+            "url": "https://github.com/FlameInTheDark",
+            "email": "viktorfreedom@gmail.com"
+        },
+        "license": {
+            "name": "Apache 2.0",
+            "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+        },
+        "version": "1.0"
+    },
+    "host": "localhost:8080",
+    "basePath": "/api/v1",
+    "paths": {
+        "/translate": {
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "translate"
+                ],
+                "summary": "Translate text to specified language",
+                "parameters": [
+                    {
+                        "description": "Translate request data",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/internal_api_translate.TranslateRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Translated text",
+                        "schema": {
+                            "$ref": "#/definitions/internal_api_translate.TranslateResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/translate/detect": {
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "translate"
+                ],
+                "summary": "Translate text to specified language",
+                "parameters": [
+                    {
+                        "description": "Translate request data",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/internal_api_translate.DetectLanguageRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Translated text",
+                        "schema": {
+                            "$ref": "#/definitions/internal_api_translate.DetectLanguageResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/translate/document": {
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "translate"
+                ],
+                "summary": "Parses document (PDF, EPUB, MOBI, DOCX, XLSX and PPTX) and translates text to specified language",
+                "parameters": [
+                    {
+                        "description": "Translate document request data",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/internal_api_translate.TranslateDocumentRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Translated text",
+                        "schema": {
+                            "$ref": "#/definitions/internal_api_translate.TranslateDocumentResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/translate/image": {
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "translate"
+                ],
+                "summary": "Extract text from image and translate it to specified language",
+                "parameters": [
+                    {
+                        "description": "Image request data",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/internal_api_translate.TranslateImageRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Translation text",
+                        "schema": {
+                            "$ref": "#/definitions/internal_api_translate.TranslateImageResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/translate/ocr": {
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "translate"
+                ],
+                "summary": "Extract text from image",
+                "parameters": [
+                    {
+                        "description": "Image request data",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/internal_api_translate.OCRImageRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Text",
+                        "schema": {
+                            "$ref": "#/definitions/internal_api_translate.OCRImageResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "internal_api_translate.DetectLanguageRequest": {
+            "type": "object",
+            "properties": {
+                "text": {
+                    "type": "string"
+                }
+            }
+        },
+        "internal_api_translate.DetectLanguageResponse": {
+            "type": "object",
+            "properties": {
+                "language": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "internal_api_translate.OCRImageRequest": {
+            "type": "object",
+            "properties": {
+                "base64_file": {
+                    "type": "string"
+                }
+            }
+        },
+        "internal_api_translate.OCRImageResponse": {
+            "type": "object",
+            "properties": {
+                "text": {
+                    "type": "string"
+                }
+            }
+        },
+        "internal_api_translate.TranslateDocumentRequest": {
+            "type": "object",
+            "properties": {
+                "base64_file": {
+                    "type": "string"
+                },
+                "file_name": {
+                    "type": "string"
+                },
+                "language": {
+                    "type": "string"
+                }
+            }
+        },
+        "internal_api_translate.TranslateDocumentResponse": {
+            "type": "object",
+            "properties": {
+                "detected": {
+                    "type": "integer"
+                },
+                "extracted": {
+                    "type": "integer"
+                },
+                "original": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "text": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "translated": {
+                    "type": "integer"
+                }
+            }
+        },
+        "internal_api_translate.TranslateImageRequest": {
+            "type": "object",
+            "properties": {
+                "base64_file": {
+                    "type": "string"
+                },
+                "language": {
+                    "type": "string"
+                }
+            }
+        },
+        "internal_api_translate.TranslateImageResponse": {
+            "type": "object",
+            "properties": {
+                "original": {
+                    "type": "string"
+                },
+                "translation": {
+                    "type": "string"
+                }
+            }
+        },
+        "internal_api_translate.TranslateRequest": {
+            "type": "object",
+            "properties": {
+                "language": {
+                    "type": "string"
+                },
+                "text": {
+                    "type": "string"
+                }
+            }
+        },
+        "internal_api_translate.TranslateResponse": {
+            "type": "object",
+            "properties": {
+                "text": {
+                    "type": "string"
+                }
+            }
+        }
+    }
+}

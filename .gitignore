@@ -1,0 +1,4 @@
+/internal/api/dist/
+.idea
+web/node_modules
+/config.yaml
