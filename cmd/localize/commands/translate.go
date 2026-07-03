@@ -29,6 +29,11 @@ func TranslateCommand() *cli.Command {
 				Aliases: []string{"l"},
 				Usage:   "Language to translate to (EN, FR, English, French, etc)",
 			},
+			&cli.StringFlag{
+				Name:    "output",
+				Aliases: []string{"o"},
+				Usage:   "Output file path",
+			},
 		},
 		Commands: []*cli.Command{
 			translateText(),
@@ -85,6 +90,18 @@ func translateText() *cli.Command {
 			}
 
 			fmt.Println(res)
+			if c.String("output") != "" {
+				outputFile, err := os.Create(c.String("output"))
+				if err != nil {
+					slog.Error("Error creating output file: ", slog.String("error", err.Error()))
+					os.Exit(1)
+				}
+				defer outputFile.Close()
+				_, err = outputFile.WriteString(res)
+				if err != nil {
+					slog.Error("Error writing to output file: ", slog.String("error", err.Error()))
+				}
+			}
 			return nil
 		},
 	}
@@ -137,6 +154,19 @@ func detectTextLanguages() *cli.Command {
 			}
 
 			fmt.Println(strings.Join(res, ", "))
+
+			if c.String("output") != "" {
+				outputFile, err := os.Create(c.String("output"))
+				if err != nil {
+					slog.Error("Error creating output file: ", slog.String("error", err.Error()))
+					os.Exit(1)
+				}
+				defer outputFile.Close()
+				_, err = outputFile.WriteString(strings.Join(res, ", "))
+				if err != nil {
+					slog.Error("Error writing to output file: ", slog.String("error", err.Error()))
+				}
+			}
 			return nil
 		},
 	}
@@ -211,6 +241,20 @@ func translateImage() *cli.Command {
 				slog.Error("Error translating text: ", slog.String("error", err.Error()))
 			}
 			fmt.Println(res)
+
+			if c.String("output") != "" {
+				outputFile, err := os.Create(c.String("output"))
+				if err != nil {
+					slog.Error("Error creating output file: ", slog.String("error", err.Error()))
+					os.Exit(1)
+				}
+				defer outputFile.Close()
+				_, err = outputFile.WriteString(res)
+				if err != nil {
+					slog.Error("Error writing to output file: ", slog.String("error", err.Error()))
+					os.Exit(1)
+				}
+			}
 			return nil
 		},
 	}
@@ -320,14 +364,11 @@ func translateDocument() *cli.Command {
 				translated = append(translated, translatedPage)
 			}
 
-			// Create a new table writer
 			t := table.NewWriter()
-			t.SetOutputMirror(os.Stdout) // Output directly to the console
+			t.SetOutputMirror(os.Stdout)
 
-			// Add a title for context
 			t.SetTitle("Translation Summary")
 
-			// Define the headers
 			t.AppendHeader(table.Row{
 				"Detected",
 				"Extracted",
@@ -335,7 +376,6 @@ func translateDocument() *cli.Command {
 				"Translated",
 			})
 
-			// Add the data row
 			t.AppendRow(table.Row{
 				detected,
 				extracted,
@@ -343,17 +383,28 @@ func translateDocument() *cli.Command {
 				len(translated),
 			})
 
-			// Optional: Add some styling to make it look modern
 			t.SetStyle(table.StyleRounded)
-			// Turn off the auto-indexing (the row numbers on the left)
 			t.Style().Options.DrawBorder = true
 			t.Style().Options.SeparateRows = false
 
-			// Render the table to the console
 			t.Render()
 
-			for i, page := range pages {
+			for i, page := range translated {
 				fmt.Println("Page", i+1, ":\n", page)
+			}
+
+			if c.String("output") != "" {
+				outputFile, err := os.Create(c.String("output"))
+				if err != nil {
+					slog.Error("Error creating output file: ", slog.String("error", err.Error()))
+					os.Exit(1)
+				}
+				defer outputFile.Close()
+				_, err = outputFile.WriteString(strings.Join(translated, "\n\n"))
+				if err != nil {
+					slog.Error("Error writing to output file: ", slog.String("error", err.Error()))
+					os.Exit(1)
+				}
 			}
 
 			return nil
