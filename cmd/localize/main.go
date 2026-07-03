@@ -54,7 +54,7 @@ func main() {
 	}
 
 	if err := cmd.Run(context.Background(), os.Args); err != nil {
-		slog.Error("Application error", err)
+		slog.Error("Application error", slog.String("error", err.Error()))
 	}
 }
 

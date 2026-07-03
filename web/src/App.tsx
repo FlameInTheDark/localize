@@ -67,7 +67,7 @@ export function App() {
             <Tooltip>
               <TooltipTrigger asChild>
                 <a
-                  href="https://github.com/FlameInTheDark"
+                  href="https://github.com/FlameInTheDark/localize"
                   target="_blank"
                   rel="noreferrer"
                   className="inline-flex size-9 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
