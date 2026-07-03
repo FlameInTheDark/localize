@@ -66,6 +66,14 @@ Set your Ollama instance URL as an environment variable:
 export OLLAMA_HOST="http://localhost:11434"
 ```
 
+>Recommended models:
+> - `translategemma:latest` [3.3GB] for text translation
+> - `glm-ocr:latest` [2.2GB] for OCR
+>
+>Pull the models using Ollama CLI:
+> - `ollama pull translategemma:latest`
+> - `ollama pull glm-ocr:latest`
+
 Then start Localize:
 
 ```bash
@@ -191,7 +199,7 @@ internal/translation  text/document translation orchestration
 internal/llm       LLM provider clients and integrations
 bin/              compiled binary output directory
 docs/api/         auto-generated Swagger JSON files
-assets/           README and UI illustration assets
+docs/assets/           README and UI illustration assets
 web/              React + Vite frontend (built with Bun)
 ```
 
