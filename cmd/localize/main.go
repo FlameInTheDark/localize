@@ -1,11 +1,14 @@
 package main
 
 import (
-	"flag"
+	"context"
 	"log/slog"
 	"os"
 	"os/signal"
 	"syscall"
+
+	"github.com/FlameInTheDark/localize/cmd/localize/commands"
+	"github.com/urfave/cli/v3"
 
 	"github.com/FlameInTheDark/localize/internal/api"
 	"github.com/FlameInTheDark/localize/internal/api/translate"
@@ -33,11 +36,30 @@ import (
 
 //	@securitydefinitions.bearerauth	BearerAuth
 
-var configFile = flag.String("config", "./config.yaml", "Path to the config file")
-
 func main() {
-	flag.Parse()
-	cfg, err := config.LoadConfig(*configFile)
+	cmd := &cli.Command{
+		Name:  "Localize",
+		Usage: "AI Translations",
+		Flags: []cli.Flag{
+			&cli.StringFlag{
+				Name:  "config",
+				Value: "./config.yaml",
+				Usage: "Path to the config file",
+			},
+		},
+		Action: serve,
+		Commands: []*cli.Command{
+			commands.TranslateCommand(),
+		},
+	}
+
+	if err := cmd.Run(context.Background(), os.Args); err != nil {
+		slog.Error("Application error", err)
+	}
+}
+
+func serve(ctx context.Context, c *cli.Command) error {
+	cfg, err := config.LoadConfig(c.String("config"))
 	if err != nil {
 		slog.Error("Error loading config: ", slog.String("error", err.Error()))
 		os.Exit(1)
@@ -99,4 +121,5 @@ func main() {
 	if err != nil {
 		slog.Error("Error stopping API: ", slog.String("error", err.Error()))
 	}
+	return nil
 }
