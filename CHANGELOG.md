@@ -1,3 +1,10 @@
+# [1.2.0](https://github.com/FlameInTheDark/localize/compare/v1.1.0...v1.2.0) (2026-07-03)
+
+
+### Features
+
+* option to output translated text to file in CLI ([061c08d](https://github.com/FlameInTheDark/localize/commit/061c08dbbdb32b18b0a5056138845c5d473c8794))
+
 # [1.1.0](https://github.com/FlameInTheDark/localize/compare/v1.0.0...v1.1.0) (2026-07-03)
 
 
